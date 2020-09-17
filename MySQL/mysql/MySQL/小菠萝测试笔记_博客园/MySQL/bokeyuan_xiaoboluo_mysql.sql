@@ -166,3 +166,67 @@ drop table if exists yytest,yytest222,yytest3;
 # [ORDER BY <order by definition>]
 # [LIMIT[<offset>,] <row count>]
 # ]
+
+DROP TABLE IF EXISTS `emp`;
+CREATE TABLE `emp`
+(
+    `id`        int(11)                                                 NOT NULL COMMENT '员工编号',
+    `name`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '员工姓名',
+    `dept_id`   int(11)                                                 NULL DEFAULT NULL COMMENT '部门编号',
+    `leader`    int(11)                                                 NULL DEFAULT NULL COMMENT '直属领导id',
+    `is_enable` int(11)                                                 NULL DEFAULT NULL COMMENT '是否在职 1在职 0离职',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci
+  ROW_FORMAT = Compact;
+
+
+INSERT INTO `emp`
+VALUES (1, '张三丰', 1, 0, 1);
+INSERT INTO `emp`
+VALUES (2, '张无忌', 1, 1, 1);
+INSERT INTO `emp`
+VALUES (3, '小龙女', 1, 1, 1);
+INSERT INTO `emp`
+VALUES (4, '小白菜', 1, 3, 1);
+INSERT INTO `emp`
+VALUES (5, '韦小宝', 2, 0, 1);
+INSERT INTO `emp`
+VALUES (6, '令狐冲', 2, 0, 1);
+INSERT INTO `emp`
+VALUES (7, '东方不败', 0, 8, 1);
+INSERT INTO `emp`
+VALUES (8, '任我行', 3, 0, 1);
+INSERT INTO `emp`
+VALUES (9, '李寻欢', 0, 8, 1);
+
+
+DROP TABLE IF EXISTS `dept`;
+CREATE TABLE `dept`
+(
+    `id`   int(11)                                                 NOT NULL COMMENT '部门id',
+    `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部门名称',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci
+  ROW_FORMAT = Compact;
+
+INSERT INTO `dept`
+VALUES (1, '销售部');
+INSERT INTO `dept`
+VALUES (2, '信息技术部');
+INSERT INTO `dept`
+VALUES (3, '财务部');
+INSERT INTO `dept`
+VALUES (4, '有关部门');
+
+-- 查询每个员工的部门详细信息
+select e.name as 员工姓名, d.name as 员工所属部门
+from emp as e
+         inner join dept as d on e.dept_id = d.id;
+-- 查询有leader的员工以及leader信息
+select e1.name as 员工姓名, e2.name as 员工leader
+from emp as e1
+         inner join emp as e2 on e1.leader = e2.id;
