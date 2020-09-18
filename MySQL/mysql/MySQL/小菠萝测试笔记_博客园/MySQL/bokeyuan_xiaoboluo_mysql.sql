@@ -230,3 +230,28 @@ from emp as e
 select e1.name as 员工姓名, e2.name as 员工leader
 from emp as e1
          inner join emp as e2 on e1.leader = e2.id;
+
+-- 查询部门是销售部的员工信息
+select *
+from emp
+where emp.dept_id = (select dept.id from dept where dept.name = "销售部");
+-- 查询部门不是销售部的员工信息
+select *
+from emp
+where emp.dept_id <> (select dept.id from dept where dept.name = "销售部");
+
+-- 从 dept 表查询部门名字为销售部or财务部的部门 id,然后从 emp 表查询 depte_id 在上面 id 结果集的记录
+select *
+from emp
+where emp.dept_id in (select id from dept where dept.name = "销售部" or dept.name = "财务部");
+
+-- 从 dept 表中查询 id = 1 的记录，若有，exists 表达式则返回True,外层查询语句接收到 True 之后，对 emp 表进行查询，返回所有记录
+select *
+from emp
+where exists(select * from dept where id = 1);
+-- 上边的sql等价于`select * from emp where true;`
+
+select *
+from emp
+where exists(select * from dept where id = 1)
+  and dept_id = 2
