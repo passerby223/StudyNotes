@@ -255,3 +255,256 @@ select *
 from emp
 where exists(select * from dept where id = 1)
   and dept_id = 2
+
+# DROP TABLE IF EXISTS `emp`;
+# CREATE TABLE `emp`
+# (
+#     `id`        int(11)                                                 NOT NULL COMMENT '员工编号',
+#     `name`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '员工姓名',
+#     `dept_id`   int(11)                                                 NULL DEFAULT NULL COMMENT '部门编号',
+#     `leader`    int(11)                                                 NULL DEFAULT NULL COMMENT '直属领导id',
+#     `is_enable` int(11)                                                 NULL DEFAULT NULL COMMENT '是否在职 1在职 0离职',
+#     PRIMARY KEY (`id`) USING BTREE
+# ) ENGINE = InnoDB
+#   CHARACTER SET = utf8
+#   COLLATE = utf8_general_ci
+#   ROW_FORMAT = Compact;
+#
+#
+# INSERT INTO `emp`
+# VALUES (1, '张三丰', 1, 0, 1);
+# INSERT INTO `emp`
+# VALUES (2, '张无忌', 1, 1, 1);
+# INSERT INTO `emp`
+# VALUES (3, '小龙女', 1, 1, 1);
+# INSERT INTO `emp`
+# VALUES (4, '小白菜', 1, 3, 1);
+# INSERT INTO `emp`
+# VALUES (5, '韦小宝', 2, 0, 1);
+# INSERT INTO `emp`
+# VALUES (6, '令狐冲', 2, 0, 1);
+# INSERT INTO `emp`
+# VALUES (7, '东方不败', 0, 8, 1);
+# INSERT INTO `emp`
+# VALUES (8, '任我行', 3, 0, 1);
+# INSERT INTO `emp`
+# VALUES (9, '李寻欢', 0, 8, 1);
+#
+#
+# DROP TABLE IF EXISTS `dept`;
+# CREATE TABLE `dept`
+# (
+#     `id`   int(11)                                                 NOT NULL COMMENT '部门id',
+#     `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部门名称',
+#     PRIMARY KEY (`id`) USING BTREE
+# ) ENGINE = InnoDB
+#   CHARACTER SET = utf8
+#   COLLATE = utf8_general_ci
+#   ROW_FORMAT = Compact;
+#
+# INSERT INTO `dept`
+# VALUES (1, '销售部');
+# INSERT INTO `dept`
+# VALUES (2, '信息技术部');
+# INSERT INTO `dept`
+# VALUES (3, '财务部');
+# INSERT INTO `dept`
+# VALUES (4, '有关部门');
+
+-- sql实战
+-- 1、查询张姓员工的员工信息和所在部门信息。
+select *, d.name
+from emp as e
+         inner join dept as d on e.dept_id = d.id
+where e.name like "张%";
+select *, d.name
+from emp as e
+         inner join dept as d on e.dept_id = d.id
+where e.name regexp "^(张)";
+-- 2、查询张三丰管理了几个员工
+select count(leader) as 员工数量
+from emp
+where leader = 1;
+-- 3、查询出所有实习员工（实习员工无部门信息）
+select *
+from emp
+where emp.id not in (select e.id
+                     from emp as e
+                              inner join dept as d on e.dept_id = d.id);
+select *
+from emp e
+where e.dept_id not in (select id from dept);
+select *
+from emp e
+         left join dept d on e.dept_id = d.id
+where d.name is null;
+-- 4、查询每个部门有多少个员工，并打印部门名字、部门里的所有员工名字
+select d.id as 部门ID, d.name as 部门名称, count(*) as 部门人数, group_concat(e.name) as 部门成员列表
+from emp e
+         right join dept d on e.dept_id = d.id
+group by d.id;
+
+# SET NAMES utf8mb4;
+# SET FOREIGN_KEY_CHECKS = 0;
+#
+# -- ----------------------------
+# -- Table structure for course
+# -- ----------------------------
+# DROP TABLE IF EXISTS `course`;
+# CREATE TABLE `course`  (
+#                            `Cno` int(11) NOT NULL COMMENT '课程编号',
+#                            `Cname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '课程名称',
+#                            `Tno` int(11) NULL DEFAULT NULL COMMENT '老师编号',
+#                            PRIMARY KEY (`Cno`) USING BTREE
+# ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+#
+# -- ----------------------------
+# -- Records of course
+# -- ----------------------------
+# INSERT INTO `course` VALUES (1, '数学', 1);
+# INSERT INTO `course` VALUES (2, '语文', 2);
+# INSERT INTO `course` VALUES (3, '英文', 1);
+#
+# -- ----------------------------
+# -- Table structure for sc
+# -- ----------------------------
+# DROP TABLE IF EXISTS `sc`;
+# CREATE TABLE `sc`  (
+#                        `Sno` int(11) NOT NULL COMMENT '学号',
+#                        `Cno` int(11) NOT NULL COMMENT '课程编号',
+#                        `score` int(255) NULL DEFAULT NULL COMMENT '分数',
+#                        PRIMARY KEY (`Sno`, `Cno`) USING BTREE
+# ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+#
+# -- ----------------------------
+# -- Records of sc
+# -- ----------------------------
+# INSERT INTO `sc` VALUES (1, 1, 99);
+# INSERT INTO `sc` VALUES (1, 2, 80);
+# INSERT INTO `sc` VALUES (1, 3, 50);
+# INSERT INTO `sc` VALUES (2, 1, 70);
+# INSERT INTO `sc` VALUES (2, 2, 90);
+# INSERT INTO `sc` VALUES (3, 1, 90);
+# INSERT INTO `sc` VALUES (4, 1, 60);
+# INSERT INTO `sc` VALUES (4, 2, 50);
+# INSERT INTO `sc` VALUES (4, 3, 40);
+#
+# -- ----------------------------
+# -- Table structure for student
+# -- ----------------------------
+# DROP TABLE IF EXISTS `student`;
+# CREATE TABLE `student`  (
+#                             `Sno` int(255) NOT NULL COMMENT '学号',
+#                             `Sname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '姓名',
+#                             `Sage` int(255) NULL DEFAULT NULL COMMENT '年龄',
+#                             `Ssex` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '性别',
+#                             PRIMARY KEY (`Sno`) USING BTREE
+# ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+#
+# -- ----------------------------
+# -- Records of student
+# -- ----------------------------
+# INSERT INTO `student` VALUES (1, '张三丰', 108, '男');
+# INSERT INTO `student` VALUES (2, '李小龙', 20, '男');
+# INSERT INTO `student` VALUES (3, '小龙女', 17, '女');
+# INSERT INTO `student` VALUES (4, '白发魔女', 18, '女');
+# INSERT INTO `student` VALUES (5, '韦小宝', 19, '男');
+#
+# -- ----------------------------
+# -- Table structure for teacher
+# -- ----------------------------
+# DROP TABLE IF EXISTS `teacher`;
+# CREATE TABLE `teacher`  (
+#                             `Tno` int(11) NOT NULL COMMENT '老师编号',
+#                             `Tname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '老师名称',
+#                             PRIMARY KEY (`Tno`) USING BTREE
+# ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+#
+# -- ----------------------------
+# -- Records of teacher
+# -- ----------------------------
+# INSERT INTO `teacher` VALUES (1, '无崖子');
+# INSERT INTO `teacher` VALUES (2, '孤独求败');
+# INSERT INTO `teacher` VALUES (3, '洪七公');
+#
+# SET FOREIGN_KEY_CHECKS = 1;
+
+#1 查询年龄小于18岁的学员信息
+select *
+from student
+where Sage < 18;
+
+#2 查询无崖子授课信息
+select *
+from teacher t
+         inner join course c on c.Tno = t.Tno
+where t.Tname = "无崖子";
+
+#3 查询没有参与任意课程的学生信息
+select *
+from student s
+         left join sc on s.Sno = sc.Sno
+where sc.score is null;
+
+#4 查询无崖子每个授课课程的学员人数 统计 + 分组
+select t.Tname, c.Cname, count(1) as "学员人数"
+from teacher t
+         join course c on t.Tno = c.Tno
+         join sc on sc.Cno = c.Cno
+group by sc.Cno
+HAVING t.Tname = "无崖子";
+
+#5 查询张三丰数学成绩
+select s.Sname, c.Cname, sc.score
+from student s
+         join sc on s.Sno = sc.Sno
+         join course c on c.Cno = sc.Cno
+where s.Sname = "张三丰"
+  and c.Cname = "数学";
+
+#6 查询出语文最高分【待完成】
+select s.Sname, max(sc.score) as "分数"
+from sc
+         join course c on sc.Cno = c.Cno
+         join student s on s.Sno = sc.Sno
+where c.Cname = "语文";
+
+#7 查询没有参与语文考试的学生信息
+select *
+from student s
+         join sc on sc.Sno = s.Sno
+         right join course c on c.Cno = sc.Cno and c.Cname = "语文" and sc.score is null;
+select *
+from course c
+         join sc on c.Cno = sc.Cno and c.Cname = "语文"
+         right join student s on s.Sno = sc.Sno
+where sc.score is null;
+
+#8 查询语数外三门成绩的平均分
+select c.Cname, avg(sc.score)
+from course c
+         join sc on c.Cno = sc.Cno
+GROUP BY c.Cno;
+
+
+#9 查询报名孤独求败老师课程的学生信息
+select *
+from student s
+         join sc on sc.Sno = s.Sno
+         join course c on c.Cno = sc.Cno
+         join teacher t on t.Tno = c.Tno
+where t.Tname = "孤独求败";
+select *
+from teacher t
+         join course c on c.Tno = t.Tno and t.Tname = "孤独求败"
+         join sc on c.Cno = sc.Cno
+         right join student s on s.Sno = sc.Sno
+where sc.score is not null;
+
+#10 没有报名孤独求败老师课程的学生信息
+select *
+from teacher t
+         join course c on c.Tno = t.Tno and t.Tname = "孤独求败"
+         join sc on c.Cno = sc.Cno
+         right join student s on s.Sno = sc.Sno
+where sc.score is null;
